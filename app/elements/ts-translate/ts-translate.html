@@ -441,6 +441,9 @@
             }
             var currentsource = this.currentproject.data.sources[current];
             var frames = App.projectsManager.getSourceFrames(currentsource);
+            var frameNotes = App.projectsManager.getFrameNotesForFrames(frames);
+            var frameQuestions = App.projectsManager.getFrameQuestionsForFrames(frames);
+            var frameWords = App.projectsManager.getFrameWordsForFrames(frames);
             var name = this.currentproject.data.project.name;
             var source = [];
             var srcchunk = {};
@@ -460,9 +463,9 @@
                 var title = frames[i].title;
                 var id = frames[i].id;
                 var sourcedata = frames[i].chunk;
-                var notes = App.projectsManager.getFrameNotes(id);
-                var questions = App.projectsManager.getFrameQuestions(id);
-                var words = App.projectsManager.getFrameWords(id);
+                var notes = Array.isArray(frameNotes[id]) ? frameNotes[id] : [];
+                var questions = Array.isArray(frameQuestions[id]) ? frameQuestions[id] : [];
+                var words = Array.isArray(frameWords[id]) ? frameWords[id] : [];
                 var verses = [];
 
                 for (var n = 0; n < notes.length; n++) {

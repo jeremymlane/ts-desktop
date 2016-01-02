@@ -220,12 +220,41 @@ function ProjectsManager(query, configurator) {
             }
         },
 
+        getFrameIdString: function(frames){
+            var s = ""
+            var frame;
+            for(frame in frames){
+                s = s + frames[frame].id + ", ";
+            }
+            s = s.substring(0, s.length - 2);
+            return s;
+        },
+
+        getFrameNotesForFrames: function(frames){
+            var r = query([
+                "select frame_id, id, title, body from translation_note",
+                "where frame_id IN(" + this.getFrameIdString(frames) + ")"
+            ].join(' '));
+
+            return zipper(r);
+        },
+
         getFrameNotes: function (frameid) {
 
                 var r = query([
                     "select title, body from translation_note",
                     "where frame_id='" + frameid + "'"
                 ].join(' '));
+
+            return zipper(r);
+        },
+
+        getFrameWordsForFrames: function(frames){
+            var r = query([
+                "select f.frame_id, w.id, w.term, w.definition, w.definition_title 'title' from translation_word w",
+                "join frame__translation_word f on w.id=f.translation_word_id",
+                "where f.frame_id IN(" + this.getFrameIdString(frames) + ")"
+            ].join(' '));
 
             return zipper(r);
         },
@@ -267,6 +296,16 @@ function ProjectsManager(query, configurator) {
             var r = query([
                 "select cast(e.frame_slug as int) 'frame', cast(e.chapter_slug as int) 'chapter', e.body from translation_word_example e",
                 "where e.translation_word_id='" + wordid + "'"
+            ].join(' '));
+
+            return zipper(r);
+        },
+
+        getFrameQuestionsForFrames: function(frames){
+            var r = query([
+                "select f.frame_id, q.question, q.answer from checking_question q",
+                "join frame__checking_question f on q.id=f.checking_question_id",
+                "where f.frame_id IN(" + this.getFrameIdString(frames) + ")"
             ].join(' '));
 
             return zipper(r);
